@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Test ClojureScript in HTML</title>
+   <script type="text/javascript" src="out/goog/base.js"></script>
+   <script type="text/javascript" src="dependencies.js"></script>
+
+   <script type="text/clojurescript">
+    (defn avg [a b] (/ (+ a b) 2))
+    </script>
+   
+   <script type="text/clojurescript" src="mathstuff.cljs"></script>
+   
+   <script type="text/clojurescript">
+    (defn product [a b] (* a b))
+    (defn getField [fieldname]
+     (.-value (.getElementById js/document fieldname)))
+   </script>
+
+   <script type="text/javascript">
+      goog.require('cljs.core');
+      goog.require('cljs.repl');
+      goog.provide('cljs.user');
+    </script>
+
+    <script type="text/javascript" src="load_ext.js"/></script>
+    <script type="text/javascript">
+    var a;
+    var b;
+    
+    function getVars() {
+      a = parseFloat(cljs.user.getField("a"));
+      b = parseFloat(cljs.user.getField("b"));
+    }
+    
+    function putResult(result) {
+      document.getElementById("result").value = result;
+    }
+    </script>
+  </head>
+  <body onload="init_cljs()">
+    <h1 style="font-size:125%;">ClojureScript in HTML files</h1>
+    <p>A proof of concept: putting ClojureScript code into an HTML document. What you
+    see here is derived from
+    <a href="https://github.com/kanaka/clojurescript">ClojureScript compiled in ClojureScript</a>,
+    though I am sure that <a href="https://github.com/kanaka">Joel Martin</a> never intended for
+    his code to be used as badly as I have used it. Blame me, not him :)</p>
+    
+    <p>My thinking was as follows: if his ClojureScript REPL can compile from strings entered into a text area, why can&rsquo;t it compile from strings that are in an HTML document. I knew that sort of thing
+    was possible; <a href="https://github.com/jeresig/processing-js">processing-js</a> can do it. In
+    fact, I lifted some of their code and modified it slightly; it's in the <samp>load_ext.js</samp>
+    file.</p>
+    
+    <p>I have put this all together without a thorough understanding of the original
+    (as will be obvious when you look
+    at the code). Again, it&rsquo;s a proof of concept, and, if it turns out to be useful, I leave
+    it to smarter and more skilled people to make it work better.</p>
+    
+    <p>
+    A: <input id="a" type="text" size="6"/>
+    B: <input id="b" type="text" size="6"/>
+    Result: <input id="result" type="text" size="10"/>
+    </p>
+    <p>
+    <input type="button" value="avg" onclick="getVars();
+      putResult(cljs.user.avg(a, b))"/>
+    <input type="button" value="square of A"
+      onclick="getVars(); putResult(cljs.user.sqr(a))"/>
+    <input type="button" value="cube of A"
+      onclick="getVars();putResult(cljs.user.cube(a))"/>
+    <input type="button" value="harmonic mean"
+      onclick="getVars(); putResult(cljs.user.harmonic_mean(a, b))"/>
+    <input type="button" value="product"
+      onclick="getVars(); putResult(cljs.user.product(a, b))"/>
+    </p>
+    
+    <p>
+    Here&rsquo;s the script in the <code>&lt;head&gt;</code> of the document.
+    I am including ClojureScript code in the HTML file directly; the
+    file <samp>load_ext.js</samp> compiles it on the fly. At the moment, you can do only
+    one included <samp>.cljs</samp> file. I have linked to the external files so you can see them easily.
+    </p>
+
+    <pre style="font-size:10pt; border:1px solid gray; padding:0.25em">&lt;script type="text/javascript" src="out/goog/base.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="<a href="dependencies.js">dependencies.js</a>"&gt;&lt;/script&gt;
+
+&lt;script type="text/clojurescript"&gt;
+(defn avg [a b] (/ (+ a b) 2))
+&lt;/script&gt;
+
+&lt;script type="text/clojurescript" src="<a href="mathstuff.cljs">mathstuff.cljs</a>"&gt;&lt;/script&gt;
+
+&lt;script type="text/clojurescript"&gt;
+(defn product [a b] (* a b))
+(defn getField [fieldname]
+  (.-value (.getElementById js/document fieldname)))
+&lt;/script&gt;
+
+&lt;script type="text/javascript"&gt;
+  goog.require('cljs.core');
+  goog.require('cljs.repl');
+  goog.provide('cljs.user');
+&lt;/script&gt;
+
+&lt;script type="text/javascript" src="<a href="load_ext.js">load_ext.js</a>"/&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var a;
+var b;
+
+function getVars() {
+  a = parseFloat(cljs.user.getField("a"));
+  b = parseFloat(cljs.user.getField("b"));
+}
+
+function putResult(result) {
+  document.getElementById("result").value = result;
+}</pre>
+  </body>
+  
+</html>
